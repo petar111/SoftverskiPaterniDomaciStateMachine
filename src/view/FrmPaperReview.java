@@ -142,6 +142,12 @@ public class FrmPaperReview extends javax.swing.JPanel {
         try {
             stateMachine.transiteToNextState(stateMachine.getStateIndex(newState));
             refreshView();
+            
+            if(stateMachine.getStates()[stateMachine.getCurrentState()] instanceof FinalState){
+                JOptionPane.showMessageDialog(pnlStateMachine, "Object reached final state!", "", JOptionPane.INFORMATION_MESSAGE);
+                pnlChooseNewState.setVisible(false);
+            }
+            
         } catch (Exception ex) {
             Logger.getLogger(FrmPaperReview.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(pnlStateMachine, ex.getMessage());
