@@ -30,7 +30,7 @@ public class StateMachine {
     private final int[][] transitions;
     
     
-    private DirectedGraph<State, Integer> stateMachineGraph;
+    private final DirectedGraph<State, Integer> stateMachineGraph;
     
     private final State startState;
     private int currentState = 0;
@@ -39,6 +39,7 @@ public class StateMachine {
         states = new State[]{new WritingState(), new ReviewState(), new CancelState(), new AcceptedState(), new RejectState(), new RewritingState()};
         transitions = new int[][]{{0, 1, 2}, {1, 3 ,4, 5}, {}, {}, {}, {1, 2, 5}};
         startState = new StartState();
+       
         
         stateMachineGraph =  makeGraph();
         
@@ -56,12 +57,16 @@ public class StateMachine {
         return transitions;
     }
 
-    public int getCurrentState() {
+    public int getCurrentStateIndex() {
         return currentState;
     }
 
     public State[] getStateTransitions() {
         return stateTransitions;
+    }
+    
+    public State getCurrentState(){
+        return states[currentState];
     }
     
     public int getStateIndex(State state) throws Exception{

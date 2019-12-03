@@ -5,6 +5,7 @@
  */
 package view;
 
+import controller.Controller;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.BasicVisualizationServer;
@@ -140,10 +141,13 @@ public class FrmPaperReview extends javax.swing.JPanel {
         State newState = (State)cmbStateTransitions.getSelectedItem();
         
         try {
-            stateMachine.transiteToNextState(stateMachine.getStateIndex(newState));
+            
+            Controller.Instance().transiteStateMachine(newState);
+            
+            
             refreshView();
             
-            if(stateMachine.getStates()[stateMachine.getCurrentState()] instanceof FinalState){
+            if(Controller.Instance().getStateMachine().getCurrentState() instanceof FinalState){
                 JOptionPane.showMessageDialog(pnlStateMachine, "Object reached final state!", "", JOptionPane.INFORMATION_MESSAGE);
                 pnlChooseNewState.setVisible(false);
             }
@@ -168,12 +172,13 @@ public class FrmPaperReview extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void prepareView() {
-        stateMachine = new StateMachine();
+        //stateMachine = new StateMachine();
         //stateMachine.initializePanel(pnlStateMachine);
         //pnlStateMachine = new JPanel(new GridLayout(1, stateMachine.getStates().length));
        // stateMachine.initializePanel(pnlStateMachine);
         
-        Layout<State,Integer> layout = new CircleLayout(stateMachine.getStateMachineGraph());
+        Layout<State,Integer> layout = new CircleLayout(Controller.Instance().getStateMachine().getStateMachineGraph());
+        
         layout.setSize(new Dimension(600,500)); // sets the initial size of the space
         BasicVisualizationServer<State,Integer> vv =
         new BasicVisualizationServer<>(layout);
@@ -208,7 +213,7 @@ public class FrmPaperReview extends javax.swing.JPanel {
     private void refreshCurrentState(){
         
         
-        State currentState = stateMachine.getStates()[stateMachine.getCurrentState()];
+        State currentState = Controller.Instance().getStateMachine().getCurrentState();
         
         lblCurrentState.setText(currentState.toString());
         
@@ -217,10 +222,12 @@ public class FrmPaperReview extends javax.swing.JPanel {
 
             @Override
             public Paint transform(State i) {
-                if(i == stateMachine.getStates()[stateMachine.getCurrentState()]){
+                
+                
+                if(i == currentState){
                     return Color.GREEN;
                 }
-                if(i instanceof FinalState || i == stateMachine.getStartState()){
+                if(i instanceof FinalState || i == Controller.Instance().getStateMachine().getStartState()){
                     return Color.BLACK;
                 }
                 return Color.RED;
@@ -237,9 +244,9 @@ public class FrmPaperReview extends javax.swing.JPanel {
     
     private void refreshTransitions() {
         
-        stateMachine.setStateTransitions();
         
-        ComboBoxModel<State> model = new DefaultComboBoxModel<>(stateMachine.getStateTransitions());
+        
+        ComboBoxModel<State> model = new DefaultComboBoxModel<>(Controller.Instance().getStateMachine().getStateTransitions());
         
         cmbStateTransitions.setModel(model);
 
